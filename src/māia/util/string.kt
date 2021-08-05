@@ -49,7 +49,7 @@ inline fun repeatString(string: String, times: Int): String {
  * @return
  *          The repetitive string.
  */
-operator fun String.times(times : Int) : String = repeatString(this, times)
+inline operator fun String.times(times : Int) : String = repeatString(this, times)
 
 /**
  * Extension function which defines string-multiplication
@@ -63,7 +63,7 @@ operator fun String.times(times : Int) : String = repeatString(this, times)
  * @return
  *          The repetitive string.
  */
-operator fun Int.times(string : String) : String = repeatString(string, this)
+inline operator fun Int.times(string : String) : String = repeatString(string, this)
 
 /**
  * Indents a string.
