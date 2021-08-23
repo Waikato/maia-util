@@ -596,3 +596,27 @@ class ElementIterator<E>(
     override fun hasNext() : Boolean = index < size
     override fun next() : E = get(index++)
 }
+
+/**
+ * Finds the first duplicate item in an iterable, with the option
+ * to use proxy objects for comparison.
+ *
+ * @receiver
+ *          The iterable to search.
+ * @param proxyFunc
+ *          An optional mapping to proxy objects for comparison.
+ * @return
+ *          The first duplicate found, or Absent if no duplicates found.
+ */
+inline fun <T> Iterable<T>.findFirstDuplicate(
+    proxyFunc: (T) -> Any? = { it }
+): Optional<T> {
+    val seen = HashSet<Any?>()
+    for (item in this) {
+        val proxy = proxyFunc(item)
+        if (proxy in seen) return item.asOptional
+        seen.add(proxy)
+    }
+
+    return Absent
+}
