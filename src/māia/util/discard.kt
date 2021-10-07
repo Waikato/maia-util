@@ -8,6 +8,6 @@ package māia.util
  * @param block
  *          The function to perform.
  */
-inline fun discard(block : () -> Any?) {
+inline fun <T> discard(block : () -> T) {
     block()
 }
