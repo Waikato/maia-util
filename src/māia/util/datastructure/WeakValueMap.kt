@@ -15,7 +15,7 @@ class WeakValueMap<K, V: Any> {
         get() = map.size
 
     operator fun contains(key: K): Boolean {
-        return this[key] == null
+        return this[key] != null
     }
 
     operator fun get(key: K): V? {
