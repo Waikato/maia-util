@@ -49,21 +49,22 @@ abstract class SingleUseReadOnlyProperty<R : Any, out T>
         // Make sure we are only delegated to once
         if (isDelegated) throw RedelegationError(this::class)
 
+        // Call custom delegation functionality
+        onDelegation(thisRef, property, property.name)
+
         // Remember our owner/property
         this.owner = thisRef
         this.property = property
-
-        // Call custom delegation functionality
-        onDelegation()
 
         return this
     }
 
     /**
-     * Performs custom property operations on delegation. The [owner]/[property]
-     * members are set before this is called, and [isDelegated] returns true.
+     * Performs custom property operations on delegation. The [owner]/[property]/[name]
+     * members are not set before this is called, so are passed as arguments. [isDelegated]
+     * returns false.
      */
-    protected abstract fun onDelegation()
+    protected abstract fun onDelegation(owner : R, property : KProperty<*>, name: String)
 
     /**
      * Performs the provided function under the assurance that
@@ -169,21 +170,22 @@ abstract class SingleUseReadWriteProperty<R : Any, T>
         // Make sure we are only delegated to once
         if (isDelegated) throw RedelegationError(this::class)
 
+        // Call custom delegation functionality
+        onDelegation(thisRef, property, property.name)
+
         // Remember our owner/property
         this.owner = thisRef
         this.property = property
-
-        // Call custom delegation functionality
-        onDelegation()
 
         return this
     }
 
     /**
-     * Performs custom property operations on delegation. The [owner]/[property]
-     * members are set before this is called, and [isDelegated] returns true.
+     * Performs custom property operations on delegation. The [owner]/[property]/[name]
+     * members are not set before this is called, so are passed as arguments. [isDelegated]
+     * returns false.
      */
-    protected abstract fun onDelegation()
+    protected abstract fun onDelegation(owner : R, property : KProperty<*>, name: String)
 
     /**
      * Performs the provided function under the assurance that
