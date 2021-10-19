@@ -19,7 +19,7 @@ class WeakValueMap<K, V: Any> {
     }
 
     operator fun get(key: K): V? {
-        return map[key]?.get()
+        return map[key]?.get().also { if (it == null) map.remove(key) }
     }
 
     operator fun set(key: K, value: V) {
