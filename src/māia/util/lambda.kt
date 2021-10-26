@@ -16,7 +16,7 @@ package māia.util
  * @param F
  *          The type of the lambda function.
  */
-fun <F : Function<*>> lambda(block : F) : F {
+inline fun <F : Function<*>> lambda(block : F) : F {
     return block
 }
 
@@ -65,4 +65,25 @@ fun <T> T.asBlock() : () -> T {
  * @return
  *          The return value of the [block].
  */
-fun <R> eval(block: () -> R): R = block()
+inline fun <R> eval(
+    crossinline block: () -> R
+): R = block()
+
+/**
+ * Utility function which executes a function and discards the result.
+ * Useful for when delegating a function which is expected to return
+ * [Unit] to a function which does not.
+ *
+ * @param block
+ *          The function to perform.
+ */
+inline fun <T> discard(block : () -> T) {
+    block()
+}
+
+/**
+ * Utility function for doing nothing.
+ */
+inline fun pass() {
+    // Does nothing
+}

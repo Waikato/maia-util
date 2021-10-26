@@ -16,6 +16,8 @@ sealed class LoopControl: Exception() {
 /**
  * A traditional for-loop with a setup, condition and update block.
  *
+ * TODO: Benchmark against iterator-for/version without try/catch.
+ *
  * @param setup
  *          The setup of the for-loop's state.
  * @param condition
@@ -62,7 +64,7 @@ inline fun inlineForLoop(
     crossinline update: () -> Unit,
     block: () -> Unit
 ) {
-    inlineForLoop<Unit>({}, { condition() }, { update() }, { block() })
+    inlineForLoop({}, { condition() }, { update() }, { block() })
 }
 
 /**
@@ -77,10 +79,27 @@ inline fun inlineForLoop(
  */
 inline fun inlineRangeForLoop(
     end: Int,
-    step: Int = if (end < 0) -1 else 1,
     block: (Int) -> Unit
 ) {
-    inlineRangeForLoop(0, end, step, block)
+    inlineRangeForLoop(0, end, block)
+}
+
+/**
+ * Basic for-loop over integers from 0 to [end], at [step] intervals.
+ *
+ * @param end
+ *          Once the index reaches this value, end iteration.
+ * @param step
+ *          The amount to increment the index by each iteration.
+ * @param block
+ *          The body of the iteration.
+ */
+inline fun inlineRangeForLoop(
+    start: Int,
+    end: Int,
+    block: (Int) -> Unit
+) {
+    inlineRangeForLoop(start, end, if (end < start) -1 else 1, block)
 }
 
 /**
@@ -98,7 +117,7 @@ inline fun inlineRangeForLoop(
 inline fun inlineRangeForLoop(
     start: Int,
     end: Int,
-    step: Int = if (end < start) -1 else 1,
+    step: Int,
     block: (Int) -> Unit
 ) {
     inlineForLoop({ start }, { it < end }, { it + step }, block)

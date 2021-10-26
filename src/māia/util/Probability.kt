@@ -5,7 +5,8 @@ package māia.util
  *
  * @author Corey Sterling (csterlin at waikato dot ac dot nz)
  */
-inline class Probability(val asDouble: Double) {
+@JvmInline
+value class Probability(val asDouble: Double) {
 
     init {
         // Ensure the double is in the valid range for probabilities

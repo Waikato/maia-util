@@ -62,13 +62,14 @@ val KClass<*>.isInterface : Boolean
  * The direct (non-interface) super-class to this type.
  */
 val KClass<*>.superClass : KClass<*> by CachedReadOnlyProperty(
-        cacheInitialiser = {
-            superclasses.first { !it.isInterface }
-        }
+    cacheInitialiser = {
+        superclasses.first { !it.isInterface }
+    },
+    perObject = false
 )
 
 /**
- * Gets a list of direct super-classes to the receiver are sub-types
+ * Gets a list of direct super-classes to the receiver which are sub-types
  * of the given class.
  *
  * @param cls

@@ -291,8 +291,7 @@ class Generator<T>(
         return valid
     }
 
-    override fun next() : T {
-        if (!hasNext()) throw NoSuchElementException()
+    override fun next() : T = ensureHasNext {
         valid = false
         val returnValue = value as T
         value = null
@@ -586,6 +585,22 @@ fun <E> Iterator<E>.inline(block : (E) -> Unit) : Iterator<E> {
         block(it)
         it
     }
+}
+
+class RandomAccessListIterator<T>(
+    private val list: List<T>,
+    startIndex: Int
+): ListIterator<T> {
+    init {
+        ensureIndexInRange(startIndex, list.size, true) {}
+    }
+    private var cursor = startIndex
+    override fun hasNext() : Boolean = cursor < list.size
+    override fun hasPrevious() : Boolean = cursor > 0
+    override fun next() : T = ensureHasNext { list[cursor++] }
+    override fun nextIndex() : Int = cursor
+    override fun previous() : T = ensureHasPrevious { list[--cursor] }
+    override fun previousIndex() : Int = cursor - 1
 }
 
 class ElementIterator<E>(

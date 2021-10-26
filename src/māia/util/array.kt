@@ -47,7 +47,7 @@ inline fun DoubleArray.mapInPlaceIndexed(crossinline block: (Int) -> Double) {
 val DoubleArray.maxIndex: Int
     get() {
         var maxIndex = 0
-        val maxValue = reduceIndexed { index, current, next ->
+        reduceIndexed { index, current, next ->
             if (next > current) {
                 maxIndex = index
                 next
@@ -102,7 +102,8 @@ class DoubleArrayBuilder() {
 
 }
 
-inline class DoubleArrayReadOnlyView(
+@JvmInline
+value class DoubleArrayReadOnlyView(
     private val source: DoubleArray
 ) {
     /**
@@ -119,4 +120,14 @@ inline class DoubleArrayReadOnlyView(
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): DoubleIterator = source.iterator()
+}
+
+/**
+ * Multiplies all values in the array by the given [factor].
+ *
+ * @receiver The [DoubleArray].
+ * @param factor The factor to multiply all values by.
+ */
+operator fun DoubleArray.timesAssign(factor: Double) {
+    mapInPlace { it * factor }
 }

@@ -20,7 +20,7 @@ val Long.Companion.bitIndexRange : IntRange
  * @throws IndexOutOfBoundsException    If the [index] is not in the [range].
  */
 fun checkIndex(index : Int, range : IntRange) {
-    if (index !in range) throw IndexOutOfBoundsException(index)
+    if (index !in range) throw indexOutOfBounds(index, range.last, range.first, true)
 }
 
 /**

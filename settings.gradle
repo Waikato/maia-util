@@ -1,0 +1,2 @@
+rootProject.name = 'maia-util'
+includeBuild "../maia-build"
