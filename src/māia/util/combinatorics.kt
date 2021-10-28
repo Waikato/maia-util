@@ -96,8 +96,8 @@ fun factorial(
     require(of >= downTo) { "'of' must be at least 'downTo', got 'of' = $of, 'downTo' = $downTo" }
 
     var result = BigInteger.ONE
-    inlineRangeForLoop(of, downTo) {
-        result *= of.toBigInteger()
+    for (i in of downTo downTo) {
+        result *= i.toBigInteger()
     }
 
     return result
@@ -374,11 +374,11 @@ data class SubsetNumber internal constructor(
                 var factor = (setSize - subsetSize + 1).toBigInteger()
                 var remainingSubsetNumber = asBigInteger
                 val subset = IntArray(subsetSize)
-                inlineRangeForLoop(subsetSize) {
+                repeat(subsetSize) {
                     val next = (remainingSubsetNumber % factor).intValueExact()
                     remainingSubsetNumber /= factor
-                    inlineRangeForLoop(subsetSize - it, subsetSize) {
-                        if (subset[it] >= next) subset[it]++
+                    for (subsetIndex in subsetSize - it until subsetSize) {
+                        if (subset[subsetIndex] >= next) subset[subsetIndex]++
                     }
                     subset[subsetSize - it - 1] = next
                     factor++
@@ -397,12 +397,12 @@ data class SubsetNumber internal constructor(
         var i = 0
         var remainingSubsetNumber = asBigInteger
         val subset = IntArray(subsetSizeActual)
-        inlineRangeForLoop(start=setSizeActual - 1, end=-1) {
+        for (it in (0 until setSizeActual).reversed()) {
             if (remainingSubsetNumber >= numSubsets) {
                 remainingSubsetNumber -= numSubsets
                 subset[i] = it
                 i++
-                if (i == subsetSizeActual) throw LoopControl.Break
+                if (i == subsetSizeActual) break
                 numSubsets = (numSubsets * k) / it.toBigInteger()
                 k--
             } else if (it != 0) {
@@ -416,7 +416,7 @@ data class SubsetNumber internal constructor(
             subset.sort()
             val counts = HashMap<Int, Int>()
             var total = 0
-            inlineRangeForLoop(setSize - 1) {
+            repeat(setSize - 1) {
                 val last = if (it == 0) -1 else subset[it-1]
                 val count = subset[it] - last - 1
                 total += count
@@ -429,7 +429,7 @@ data class SubsetNumber internal constructor(
             val subsetActual = IntArray(subsetSize)
             var index = 0
             for ((value, count) in counts.entries) {
-                inlineRangeForLoop(count) {
+                repeat(count) {
                     subsetActual[index] = value
                     index++
                 }

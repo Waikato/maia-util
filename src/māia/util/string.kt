@@ -31,7 +31,7 @@ inline fun repeatString(string: String, times: Int): String {
     }
 
     return buildString(string.length * times) {
-        inlineForLoop({ 0 }, { it < times }, { it.inc() }) {
+        repeat(times) {
             append(string)
         }
     }

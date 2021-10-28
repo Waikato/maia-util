@@ -22,10 +22,10 @@ class RandomAccessSubList<T>(
     override fun contains(element : T) : Boolean = indexOf(element) != -1
     override fun containsAll(elements : Collection<T>) : Boolean = elements.all { contains(it) }
     override fun get(index : Int) : T = ensureIndexInRange(index, size) { list[index + fromIndex] }
-    override fun indexOf(element : T) : Int { inlineRangeForLoop(fromIndex, toIndex) { if (element == list[it]) return it - fromIndex }; return -1 }
+    override fun indexOf(element : T) : Int { for(index in fromIndex until toIndex) { if (element == list[index]) return index - fromIndex }; return -1 }
     override fun isEmpty() : Boolean = toIndex == fromIndex
     override fun iterator() : Iterator<T> = listIterator(0)
-    override fun lastIndexOf(element : T) : Int { inlineForLoop({ toIndex - 1}, { it >= fromIndex }, { it - 1 }) { if (element == list[it]) return it - fromIndex }; return -1 }
+    override fun lastIndexOf(element : T) : Int { for (index in (fromIndex until toIndex).reversed()) { if (element == list[index]) return index - fromIndex }; return -1 }
     override fun listIterator() : ListIterator<T> = listIterator(0)
     override fun listIterator(index : Int) : ListIterator<T> = RandomAccessListIterator(this, index)
     override fun subList(fromIndex : Int, toIndex : Int) : List<T> = ensureSublistRange(fromIndex, toIndex, size) { list.subList(fromIndex + this.fromIndex, toIndex + this.fromIndex) }
