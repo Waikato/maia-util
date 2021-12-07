@@ -5,6 +5,7 @@ package māia.util
  */
 
 import māia.util.property.CachedReadOnlyProperty
+import java.net.URL
 import kotlin.reflect.KClass
 import kotlin.reflect.full.allSuperclasses
 import kotlin.reflect.full.superclasses
@@ -80,4 +81,17 @@ val KClass<*>.superClass : KClass<*> by CachedReadOnlyProperty(
 fun KClass<*>.superClassesUpTo(cls : KClass<*>) : List<KClass<*>> {
     if (this isNotSubClassOf cls) return EmptyList
     return superclasses.filter { it isSubClassOf cls }
+}
+
+/**
+ * Equivalent to [Class.getResource] from a static context.
+ *
+ * @param  name
+ *          The name of the desired resource.
+ * @return  A  [java.net.URL] object or null if no resource with this name
+ *          is found.
+ */
+fun getResourceStatic(name: String): URL? {
+    class Dummy
+    return Dummy::class.java.getResource(name)
 }
