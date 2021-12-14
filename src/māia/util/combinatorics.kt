@@ -96,7 +96,7 @@ fun factorial(
     require(of >= downTo) { "'of' must be at least 'downTo', got 'of' = $of, 'downTo' = $downTo" }
 
     var result = BigInteger.ONE
-    for (i in of downTo downTo) {
+    for (i in of downTo downTo + 1) {
         result *= i.toBigInteger()
     }
 
