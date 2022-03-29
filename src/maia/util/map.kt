@@ -49,3 +49,71 @@ inline fun <K, V> Map<K, V>.doIfPresent(
 
     return false
 }
+
+/**
+ * Formats a map as a string. The default parameter values give a compressed
+ * form:
+ *
+ * ```
+ * {key1:value1,key2:value2,...}
+ * ```
+ *
+ * @receiver
+ *          The map to format.
+ * @param prefix
+ *          The opening brace.
+ * @param suffix
+ *          The closing brace.
+ * @param keyValueSeparator
+ *          The separator to place between each key and value.
+ * @param entrySeparator
+ *          The separator to place between each key/value pair.
+ * @param formatKey
+ *          A function which formats each key to a string.
+ * @param formatValue
+ *          A function which formats each value to a string.
+ * @return
+ *          A formatted string-representation of the map.
+ */
+fun <K, V> Map<K, V>.format(
+    prefix: String = "{",
+    suffix: String = "}",
+    keyValueSeparator: String = ":",
+    entrySeparator: String = ",",
+    formatKey: (K) -> String = { it.toString() },
+    formatValue: (V) -> String = { it.toString() }
+): String {
+    return "${prefix}${this.entries.map { "${formatKey(it.key)}${keyValueSeparator}${formatValue(it.value)}" }.joinToString(entrySeparator)}${suffix}"
+}
+
+/**
+ * Formats a map as a string, using a standard "pretty" form:
+ *
+ * ```
+ * {
+ *      key1: value1,
+ *      key2: value2,
+ *      ...
+ * }
+ * ```
+ *
+ * @receiver
+ *          The map to format.
+ * @param formatKey
+ *          A function which formats each key to a string.
+ * @param formatValue
+ *          A function which formats each value to a string.
+ * @return
+ *          A formatted string-representation of the map.
+ */
+fun <K, V> Map<K, V>.formatPretty(
+    formatKey: (K) -> String = { it.toString() },
+    formatValue: (V) -> String = { it.toString() }
+) = format(
+    "{\n\t",
+    "\n}",
+    ": ",
+    ",\n\t",
+    formatKey,
+    formatValue
+)
