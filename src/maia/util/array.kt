@@ -131,3 +131,15 @@ value class DoubleArrayReadOnlyView(
 operator fun DoubleArray.timesAssign(factor: Double) {
     mapInPlace { it * factor }
 }
+
+/**
+ * Performs the given [action] on each element in reverse order.
+ *
+ * @receiver
+ *          The array to iterate over.
+ * @param action
+ *          The action to perform on each element.
+ */
+inline fun <T> Array<out T>.forEachReversed(action: (T) -> Unit) {
+    for (index in indices.reversed()) action(this[index])
+}
