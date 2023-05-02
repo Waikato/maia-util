@@ -1,5 +1,17 @@
 package maia.util
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+
 /**
  * Package for working with iterables/iterators.
  */
@@ -634,4 +646,79 @@ inline fun <T> Iterable<T>.findFirstDuplicate(
     }
 
     return Absent
+}
+
+/**
+ * Creates a synchronous iterator over a flow.
+ *
+ * @receiver
+ *          The flow to synchronously iterate over.
+ * @param capacity
+ *          The capacity of the buffering channel. See [Channel].
+ * @param onBufferOverflow
+ *          Overflow strategy for the buffering channel. See [BufferOverflow].
+ * @return
+ *          The iterator over the flow.
+ */
+fun <T> Flow<T>.sync(
+    capacity: Int = Channel.RENDEZVOUS,
+    onBufferOverflow: BufferOverflow = BufferOverflow.SUSPEND
+): Iterator<T> {
+    // Channel for the async task to collect elements into
+    val channel: Channel<T> = Channel(capacity, onBufferOverflow)
+
+    // Scope of the async element-collection task
+    var scope: CoroutineScope? = CoroutineScope(Dispatchers.Default).apply {
+        launch {
+            this@sync.collect {
+                channel.send(it)
+            }
+            channel.close()
+        }
+    }
+
+    return object : Iterator<T> {
+        /** Optional reference to the channel so we can drop it as soon as we're done with it. */
+        private var channelRef: Channel<T>? = channel
+        /** Mutex guarding reading/writing the next value. */
+        private var mutex: Mutex? = Mutex();
+        /** The buffered next value, if any. */
+        private var nextValue: Optional<T> = Absent;
+
+        /**
+         * Attempts to buffer the next element, if it hasn't already,
+         * and returns it (or null if the channel has closed).
+         *
+         * @param take
+         *          Whether to take the buffered value.
+         */
+        private fun buffer(take: Boolean): Optional<T> {
+            return runBlocking {
+                mutex?.withLock {
+                    if (nextValue is Absent) {
+                        try {
+                            // Non-null assertion: channelRef is only null if mutex is, so can't have reached here
+                            nextValue = channelRef!!.receive().asOptional
+                        } catch (e : ClosedReceiveChannelException) {
+                            mutex = null
+                            scope = null
+                            channelRef = null
+                        }
+                    }
+                    nextValue.also { if (take) nextValue = Absent }
+                } ?: Absent
+            }
+        }
+
+        override fun hasNext() : Boolean {
+            return buffer(take = false) is Present<*>
+        }
+
+        override fun next() : T {
+            val value = buffer(take = true)
+            if (value is Absent) throw NoSuchElementException()
+            return value.get()
+        }
+
+    }
 }
