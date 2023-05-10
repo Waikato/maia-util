@@ -558,18 +558,28 @@ fun <T> Array<T>.enumerate(start : Int = 0) : Iterator<Pair<Int, T>> {
  * @return      A pair of (index, element) for the maximum element.
  * @param E     The type of comparable element in the iterator.
  */
-fun <E : Comparable<E>> Iterator<E>.maxWithIndex() : Pair<Int, E> {
-    var maxIndex = 0
-    val maxValue = asIterable().reduceIndexed { index, current, next ->
-        if (next > current) {
-            maxIndex = index
-            next
-        } else {
-            current
-        }
+fun <E : Comparable<E>> Iterator<E>.maxWithIndex() : Pair<Int, E?> {
+    var max: Pair<Int, E> = try {
+        Pair(0, next())
+    } catch (e: NoSuchElementException) {
+        return Pair(-1, null)
     }
-    return Pair(maxIndex, maxValue)
+
+    enumerate(1).forEachRemaining {
+        if (it.second > max.second) max = it
+    }
+
+    return max
 }
+
+/**
+ * Finds the maximum element in an iterable of comparable items.
+ *
+ * @receiver    The iterable to search.
+ * @return      A pair of (index, element) for the maximum element.
+ * @param E     The type of comparable element in the iterable.
+ */
+fun <E : Comparable<E>> Iterable<E>.maxWithIndex() : Pair<Int, E?> = iterator().maxWithIndex()
 
 /**
  * Finds the maximum value of an iterator of [Comparable]s.
