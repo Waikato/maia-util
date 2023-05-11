@@ -101,7 +101,7 @@ fun <R> noInlineNonLocalReturn(block : NoInline<R>.() -> R) : R {
  * @param block
  *          The block to execute.
  */
-fun noInlineNonLocalReturn(block : NoInlineUnit.() -> Unit) {
+inline fun noInlineNonLocalReturn(block : NoInlineUnit.() -> Unit) {
     return try {
         // Execute the block with non-local return support
         NoInlineUnit.block()
