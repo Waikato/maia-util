@@ -138,6 +138,21 @@ operator fun BigInteger.minus(value : Int) : BigInteger {
     return this - value.toBigInteger()
 }
 
+/**
+ * Extension operator which allows multiplication of [Int]s with
+ * [BigInteger]s.
+ *
+ * @receiver
+ *          The left-operand of the subtraction.
+ * @param value
+ *          The right-operand of the subtraction.
+ * @return
+ *          The [BigInteger] product of the operands.
+ */
+operator fun BigInteger.times(value : Int) : BigInteger {
+    return this * value.toBigInteger()
+}
+
 // TODO: Other arithmetic operations on Ints
 // TODO: Arithmetic operations on Longs
 
