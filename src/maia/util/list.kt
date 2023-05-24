@@ -30,3 +30,15 @@ class RandomAccessSubList<T>(
     override fun listIterator(index : Int) : ListIterator<T> = RandomAccessListIterator(this, index)
     override fun subList(fromIndex : Int, toIndex : Int) : List<T> = ensureSublistRange(fromIndex, toIndex, size) { list.subList(fromIndex + this.fromIndex, toIndex + this.fromIndex) }
 }
+
+/**
+ * Creates a read-only view of a list.
+ *
+ * @receiver
+ *          The list to view.
+ * @return
+ *          The read-only view of the list.
+ */
+inline fun <T> List<T>.readOnly(): List<T> {
+    return object: List<T> by this {}
+}
