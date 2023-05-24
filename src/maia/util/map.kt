@@ -117,3 +117,15 @@ fun <K, V> Map<K, V>.formatPretty(
     formatKey,
     formatValue
 )
+
+/**
+ * Creates a read-only view of a map.
+ *
+ * @receiver
+ *          The map to view.
+ * @return
+ *          The read-only view of the map.
+ */
+fun <K, V> Map<K, V>.readOnly(): Map<K, V> {
+    return object: Map<K, V> by this {}
+}
