@@ -662,6 +662,10 @@ inline fun <T> Iterable<T>.findFirstDuplicate(
 /**
  * Creates a synchronous iterator over a flow.
  *
+ * TODO: Do something like [iterator][kotlin.sequences.iterator] which captures
+ *       the coroutine and steps it as necessary to generate elements when
+ *       iterated.
+ *
  * @receiver
  *          The flow to synchronously iterate over.
  * @param capacity
