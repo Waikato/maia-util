@@ -29,8 +29,14 @@ class ConcurrentModificationManager {
     /**
      * Tracker for views of mutable data-structures which should fail-fast
      * when the source data-structure changes its structure.
+     *
+     * @param inner
+     *          If the source structure is itself a view, set this to a View
+     *          from the source's source.
      */
-    inner class View {
+    inner class View(
+        val inner: View? = null
+    ) {
         @PublishedApi
         internal val source = this@ConcurrentModificationManager
 
@@ -42,12 +48,16 @@ class ConcurrentModificationManager {
         inline fun <R> checkForStructuralModification(
             block: () -> R
         ): R {
-            if (source.generation != expectedGeneration)
-                throw ConcurrentModificationException()
+            // Recursively check all nested views for modification
+            var view: View? = this
+            while (view != null) {
+                if (view.source.generation != view.expectedGeneration)
+                    throw ConcurrentModificationException()
+                view = view.inner
+            }
 
             return block()
         }
-
     }
 
 }
